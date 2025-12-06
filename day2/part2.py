@@ -17,11 +17,10 @@ def is_invalid(num_str):
 result = 0
 for line in input_str:
     left, right = line.split("-")
-    # print(left, right)
     for i in range(int(left), int(right) + 1):
         if is_invalid(str(i)):
-            # print(i)
             result += i
+
 print(result)
 
 """
