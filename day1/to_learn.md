@@ -1,0 +1,3 @@
+- you can use mod operator even if it goes to the negative.. Main learning!!!!!
+- Some math tripped me out
+- Edge on part 2
