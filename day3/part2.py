@@ -1,4 +1,4 @@
-f = open("actual.txt", "r")   # open for reading
+f = open("test.txt", "r")   # open for reading
 input_str = f.read()
 f.close()
 
