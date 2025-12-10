@@ -51,30 +51,5 @@ for line in input_str:
 
     joltage = parts[-1]
     result += bfs(expected_state, buttons)
-    # print(bfs(expected_state, buttons))
-    # print(expected_state, buttons)
 
 print(result)
-# input_str = "[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}"
-# expected_state = (0, 1, 1, 0)
-# options = [(3,), (1,3), (2,), (2,3), (0,2), (0,1)]
-
-# seen = set([(0,0,0,0)])
-# queue = deque([((0,0,0,0), 0)])
-# while len(queue):
-#     candidate, dist = queue.popleft()
-#     if candidate == expected_state:
-#         print(dist)
-#         break
-
-#     for option in options:
-#         cand_modified = list(candidate)
-#         for elem in option:
-#             cand_modified[elem] = 0 if cand_modified[elem] == 1 else 1 
-        
-#         cand_modified = tuple(cand_modified)
-#         if cand_modified in seen:
-#             continue
-        
-#         queue.append((cand_modified, dist + 1))
-#         seen.add(cand_modified)
