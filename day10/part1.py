@@ -53,3 +53,4 @@ for line in input_str:
     result += bfs(expected_state, buttons)
 
 print(result)
+# ​​Yeah BFS with bitmask
