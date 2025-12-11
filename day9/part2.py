@@ -1,69 +1,120 @@
-f = open("test.txt", "r")   # open for reading
-input_str = f.read()
+f = open("actual.txt", "r")   # open for reading
+input_str = f.read().split("\n")
 f.close()
 
-import heapq
-import math
 
-from collections import deque
-import math
-from collections import defaultdict
-
-
-input_str = input_str.split("\n")
 points = []
-grid = [["." for j in range(14)] for i in range(9)]
+for line in input_str:
+    x, y = line.split(",")
+    # maze[int(y)][int(x)] = "#"
+    points.append((int(x), int(y)))
+
+def get_direction(point1, point2):
+    # Same X
+    if point1[0] == point2[0]:
+        if point1[1] < point2[1]:
+            return "DOWN"
+        else:
+            return "UP"
+    # Same Y
+    else:
+        if point1[0] < point2[0]:
+            return "RIGHT"
+        else:
+            return "LEFT"
+
+direction = "right"
+outer_edge = set([])
+edges = set()
+for i in range(len(points)):
+    point1, point2 = points[i], points[(i + 1)% len(points)]
+    p1_x, p1_y = points[i]
+    p2_x, p2_y = points[(i + 1)% len(points)]
+
+    direction = get_direction(point1, point2)
+    dy = abs(point1[1] - point2[1])
+    dx = abs(point1[0] - point2[0])
+    if direction == "UP":
+        start_x, start_y = p1_x, max(p1_y, p2_y)
+        for _ in range(dy + 1):
+            outer_edge.add((start_x - 1, start_y))
+            edges.add((start_x, start_y))
+            start_y -= 1
+    elif direction == "RIGHT":
+        start_x, start_y = min(p1_x, p2_x), p1_y
+        for _ in range(dx + 1):
+            outer_edge.add((start_x, start_y - 1))
+            edges.add((start_x, start_y))
+            start_x += 1
+    elif direction == "DOWN":
+        start_x, start_y = p1_x, min(p1_y, p2_y)
+        for _ in range(dy + 1):
+            outer_edge.add((start_x + 1, start_y))
+            edges.add((start_x, start_y))
+            start_y += 1
+    else:
+        start_x, start_y = max(p1_x, p2_x), p1_y
+        for _ in range(dx + 1):
+            outer_edge.add((start_x, start_y + 1))
+            edges.add((start_x, start_y))
+            start_x -= 1
+
+
+
+for (x, y) in edges:
+    if (x, y) in outer_edge:
+        outer_edge.remove((x, y))
+
+
+def rectangle_size(point_x, point_y):
+    dx = abs(point_x[0] - point_y[0]) + 1
+    dy = abs(point_x[1] - point_y[1]) + 1
+    return dx * dy
+
+
+iteration = 0
+def check_rectangle(point_x, point_y):
+    global iteration
+    iteration += 1
+    print("CHECKING RECT", iteration)
+    r1, c1 = point_x
+    r2, c2 = point_y
+    
+    # Get the bounds
+    min_r, max_r = min(r1, r2), max(r1, r2)
+    min_c, max_c = min(c1, c2), max(c1, c2)
+    
+    path = []
+    
+    # Top edge: left to right
+    for c in range(min_c, max_c + 1):
+        if (min_r, c) in outer_edge:
+            return False
+    
+    # Right edge: top to bottom (skip corner already added)
+    for r in range(min_r + 1, max_r + 1):
+        if (r, max_c) in outer_edge:
+            return False
+    
+    # Bottom edge: right to left (skip corner already added)
+    for c in range(max_c - 1, min_c - 1, -1):
+        if (max_r, c) in outer_edge:
+            return False
+    
+    # Left edge: bottom to top (skip both corners)
+    for r in range(max_r - 1, min_r, -1):
+        if (r, min_c) in outer_edge:
+            return False
+    
+    return True
+
+
 
 max_size = float("-inf")
-min_x, max_x = float("inf"), float("-inf")
-min_y, max_y = float("inf"), float("-inf")
-for point in input_str:
-    x, y = point.split(",")
-    x, y = int(x), int(y)
-    points.append((x, y))
-    # min_x = min(min_x, x)
-    # min_y = min(min_y, y)
-    # max_x = max(max_x, x)
-    # max_y = max(max_y, y)
-    grid[y][x] = "#"
+for i in range(len(points)):
+    for j in range(i + 1, len(points)):
+        is_valid_rect = check_rectangle(points[i], points[j])
+        if is_valid_rect:
+            max_size = max(max_size, rectangle_size(points[i], points[j]))
 
-for line in grid:
-    print("".join(line))
-
-# Fill in the borders
-
-for i in range(1, len(points)):
-    point_a, point_b = points[i - 1], points[i]
-    same_x = point_a[0] == point_b[0]
-    same_y = point_a[1] == point_b[1]
-    print(point_a, point_b, "same x" if same_x else "same y")
-    if same_x:
-        dist = abs(point_a[1] - point_b[1])
-
-
-        # direction = 1 if point_a[1] - point_b[1] < 0 else -1
-        # dist = abs(point_a[1] - point_b[1])
-        # curr_y 
-        # for i in range(dist):
-
-        # # print(point_a[1] - point_b[1], direction, point_a, point_b)
-        # print(direction)
-        # curr_
-    else:
-        dist = abs(point_a[0] - point_b[0])
-        curr_x = min(point_a[0], point_b[0])
-        curr_y = point_a[1]
-        for i in range(dist):
-            grid[curr_x][curr_y] = "#"
-            curr_x += 1
-
-        # direction = 1 if point_a[0] - point_b[0] < 0 else -1
-        # left_most_x = min(point_a[0], point_b[0])
-        # print(direction)
-
-# print(points)
-
-# for i in range(len(points)):
-#     for j in range(i + 1, len(points)):
-#         max_size = max(max_size, rectangle_size(points[i], points[j]))
-# print(max_size)
+print(max_size)
